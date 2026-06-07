@@ -4,12 +4,15 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
+from app.db import pool
+from app.routers import auth
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Пул соединений с БД поднимается в задаче #24 (app.db.pool).
+    await pool.connect()
     yield
+    await pool.disconnect()
 
 
 app = FastAPI(title="Brick & Razor Admin API", version="0.1.0", lifespan=lifespan)
@@ -22,10 +25,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(auth.router)
+
 
 @app.get("/health")
 async def health():
     return {"status": "ok"}
 
 
-# Роутеры (auth/clients/appointments/stats) подключаются в задачах #24-26.
+# Роутеры clients/appointments/stats подключаются в задачах #25-26.
