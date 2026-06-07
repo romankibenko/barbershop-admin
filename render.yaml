@@ -1,0 +1,24 @@
+# Render Blueprint — поднимает backend Brick & Razor Admin из этого репо.
+# БД здесь НЕ создаём: Postgres живёт в Neon, DATABASE_URL задаётся вручную.
+services:
+  - type: web
+    name: barbershop-admin-api
+    runtime: python
+    rootDir: backend
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.7"
+      - key: DATABASE_URL
+        sync: false   # Neon connection string — вписать в дашборде Render
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ADMIN_USERNAME
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false   # домен Vercel-фронта, через запятую

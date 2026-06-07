@@ -20,7 +20,14 @@ async def ensure_database() -> None:
     # Подключаемся к служебной базе postgres теми же кредами, чтобы создать целевую.
     admin_dsn = urlunparse(parsed._replace(path="/postgres"))
 
-    conn = await asyncpg.connect(admin_dsn)
+    # На managed-хостингах (Neon и т.п.) база уже создана и доступа к postgres
+    # может не быть — тогда просто переходим к накату схемы.
+    try:
+        conn = await asyncpg.connect(admin_dsn)
+    except Exception as exc:
+        print(f"[--] Пропускаю создание базы ({type(exc).__name__}) — применяю схему к существующей")
+        return
+
     try:
         exists = await conn.fetchval("SELECT 1 FROM pg_database WHERE datname = $1", db_name)
         if not exists:
