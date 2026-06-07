@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
 from app.db import pool
-from app.routers import auth, clients
+from app.routers import appointments, auth, clients, refs, stats
 
 
 @asynccontextmanager
@@ -27,11 +27,11 @@ app.add_middleware(
 
 app.include_router(auth.router)
 app.include_router(clients.router)
+app.include_router(refs.router)
+app.include_router(appointments.router)
+app.include_router(stats.router)
 
 
 @app.get("/health")
 async def health():
     return {"status": "ok"}
-
-
-# Роутеры appointments/stats подключаются в задаче #26.
