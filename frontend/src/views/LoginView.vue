@@ -76,6 +76,10 @@ async function submit() {
           Войти
         </v-btn>
       </v-form>
+
+      <p class="demo-hint text-center text-medium-emphasis mt-6">
+        Демо-доступ: <code>admin</code> / <code>admin123</code>
+      </p>
     </v-card>
   </v-container>
 </template>
@@ -88,6 +92,14 @@ async function submit() {
 }
 
 .brand-accent {
+  color: rgb(var(--v-theme-primary));
+}
+
+.demo-hint {
+  font-size: 0.85rem;
+}
+
+.demo-hint code {
   color: rgb(var(--v-theme-primary));
 }
 </style>
